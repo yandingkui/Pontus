@@ -7,7 +7,10 @@ class PublicSuffix(object):
     _instance_lock = threading.Lock()
 
     def __init__(self):
-        self._psl=PublicSuffixList(source=os.path.abspath("../source/public_suffix_list.dat"),accept_unknown=False)
+        with open("../source/public_suffix_list.dat","r") as f:
+            source = f.readlines()
+
+        self._psl=PublicSuffixList(source=source,accept_unknown=False)
 
 
     def getPublicSuffixList(self):
