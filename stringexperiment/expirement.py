@@ -57,8 +57,6 @@ def get_correct_level2(time_files):
             result.add(r)
     with open("/home/yandingkui/dga_detection/result_data/NXD_l2", "w") as f:
         f.write("\n".join(result) + "\n")
-
-
 ###############################
 
 ###############################

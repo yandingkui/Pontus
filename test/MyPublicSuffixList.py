@@ -273,5 +273,5 @@ class PublicSuffixList(object):
 if __name__=="__main__":
     psl = PublicSuffixList(source=os.path.abspath("../source/public_suffix_list.dat"),accept_unknown=False)
     print(psl.publicsuffix(".cn"))
-    print(psl.privatesuffix("baidu.com.cnccc"))
+    print(psl.privatesuffix("baidu.com"))
     # print("baidu.ma.gov.br".rsplit(".",2))

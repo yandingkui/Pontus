@@ -10,8 +10,8 @@ import math
 from sklearn.externals.joblib.parallel import Parallel, delayed
 import enchant
 
-model_data = pickle.load(open('../referenceFiles/gib_model.pki', 'rb'))
-top100k = pickle.load(open('../referenceFiles/top_100k.pki', 'rb'))
+model_data = pickle.load(open('../source/gib_model.pki', 'rb'))
+top100k = pickle.load(open('../source/top_100k.pki', 'rb'))
 HEX_DIGITS = set('0123456789abcdef')
 VOWELS = set('aeiou')
 CONSONANTS = set('bcdfghjklmnpqrstvwxyz')
@@ -164,7 +164,7 @@ def _shannon_entropy(d: str):
     m = defaultdict(int)
     for i in d:
         m[i] += 1
-    print(m)
+    # print(m)
     return [stats.entropy(list(m.values()), base=2)]
 
 
