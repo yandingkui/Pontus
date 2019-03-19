@@ -1,15 +1,16 @@
-import sys
+import sys,os
 sys.path.append("..")
 import threading
 from publicsuffixlist import PublicSuffixList
 
 class PublicSuffix(object):
     _instance_lock = threading.Lock()
-    _psl=None
-    def __init__(self):
-        _psl=PublicSuffixList(source="../source/public_suffix_list.dat",accept_unknown=False)
 
-    def getPublicSuffixList(self,number):
+    def __init__(self):
+        self._psl=PublicSuffixList(source=os.path.abspath("../source/public_suffix_list.dat"),accept_unknown=False)
+
+
+    def getPublicSuffixList(self):
         return self._psl
 
     def __new__(cls, *args, **kwargs):
