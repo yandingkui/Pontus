@@ -1,14 +1,15 @@
 import sys
 sys.path.append("..")
-from util.PublicSuffix import PublicSuffix
+# from util.PublicSuffix import PublicSuffix
 from util.WhiteLIstUtil import WhiteListUtil
-
+from publicsuffixlist import PublicSuffixList
 import re
 
 class SingleFilter():
 
-    def __init__(self,number):
-        self.psl = PublicSuffix().getPublicSuffixList()
+    def __init__(self,number,psl):
+        # self.psl = PublicSuffix().getPublicSuffixList()
+        self.psl=psl
         self.wl=WhiteListUtil(number)
 
     def haveCorrectTLD(self, domain: str):
@@ -46,16 +47,23 @@ class SingleFilter():
             return False
 
 class Filter():
+    def __init__(self):
+        self.psl= PublicSuffixList(accept_unknown=False)
+        self.sf = SingleFilter(100000, self.psl)
+
     def isValidDomain(self,domain:str):
-        sf=SingleFilter(100000)
-        if (sf.isValidDomain(domain) and sf.haveCorrectTLD(domain)  and (not sf.inWhiteList(domain))):
+        if (self.sf.isValidDomain(domain) and (not self.sf.inWhiteList(domain))):
             return True
         else:
             return False
 
     def Two_Three_level_domain(self,domain:str):
-        psl = PublicSuffix().getPublicSuffixList()
-        publicsuffix=psl.publicsuffix(domain)
+        """
+        identify a domain
+        :param domain:  domain:str
+        :return: bool
+        """
+        publicsuffix=self.psl.publicsuffix(domain)
         if publicsuffix==None:
             return False
         pre_domain=domain[:domain.rindex(publicsuffix)-1]
@@ -67,50 +75,6 @@ class Filter():
             return True
         else:
             return False
-
-
-    def handle(self, datalines, hour_result,ip_set):
-        # filter = Filter()
-        # for line in datalines:
-        #     try:
-        #         line = line.decode().strip()
-        #         linesplit = line.split(',')
-        #         source_ip = linesplit[0].strip().lower()
-        #         querydomain = linesplit[3].strip().lower()
-        #         rcode = linesplit[16]
-        #         ds = querydomain.split(".")
-        #         if len(ds) == 2 or len(ds) == 3:
-        #             status = filter.get_nx_ac_domains(querydomain, rcode)
-        #             if status == 0:
-        #                 continue
-        #             else:
-        #                 ac_nx_set = hour_dict.get(source_ip)
-        #                 if not ac_nx_set:
-        #                     ac_nx_set = [set(), set()]
-        #                 if status == 2:
-        #                     ac_nx_set[1].add(querydomain)
-        #                 elif status == 1:
-        #                     ac_nx_set[0].add(querydomain)
-        #                 hour_dict[source_ip] = ac_nx_set
-        #     except:
-        #         continue
-        ipv4_pattern = re.compile("(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])")
-
-        for line in datalines:
-            try:
-                line = line.decode().strip()
-                linesplit = line.split(',')
-                source_ip = linesplit[0].strip().lower()
-                querydomain = linesplit[3].strip().lower()
-                rcode = linesplit[16].strip()
-                answer=linesplit[19].strip().lower()
-                if rcode != "3" and len(answer)!=0:
-                    answer_split=answer.split(";")
-                    for a in answer_split:
-                        if ipv4_pattern.match(a) and a in ip_set:
-                            hour_result.append(line)
-            except:
-                continue
 
 if __name__=="__main__":
     filter=Filter()

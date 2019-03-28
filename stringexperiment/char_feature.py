@@ -310,7 +310,7 @@ def extract_features(d: str, features):
         try:
             feature_vector = feature_vector + f(d)
         except (ValueError, ArithmeticError) as e:
-            feature_vector = feature_vector + [0]
+           print("{} error at {}".format(f,d))
     return feature_vector
 
 # extra all features
@@ -340,5 +340,5 @@ def extract_all_features_for_2(data,n_jobs=-1):
 
 if __name__ == "__main__":
     # print(extract_features_2(["baidu","qq"],ALL_FEATURES))
-    print(_shannon_entropy("grand-casino50"))
+    print(len(extract_all_features(["www","s180315349"])[1]))
     #print(extract_features("trlekmynqihxxhy6k",ALL_FEATURES))

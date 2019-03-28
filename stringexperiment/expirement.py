@@ -738,7 +738,6 @@ def real_world(root_dir="/home/yandingkui/dga_detection/result_data/", m_file="s
         if len(d_array) == 1:
             l1_domains.append(d_array[0])
             l1_real_domains.append(d)
-
         elif len(d_array) == 2:
             l2_domains.append(d_array)
             l2_real_domains.append(d)
