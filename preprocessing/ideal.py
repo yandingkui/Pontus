@@ -5,114 +5,195 @@ sys.path.append("..")
 import requests
 import json
 import numpy as np
+import pandas as pd
 from publicsuffixlist import PublicSuffixList
 from stringexperiment.char_feature import extract_all_features
 from sklearn.externals import joblib
 from datetime import datetime
+from pyclustering.cluster.xmeans import xmeans
+from pyclustering.cluster.center_initializer import kmeans_plusplus_initializer
+from sklearn.preprocessing import MinMaxScaler
 
 
-def get_suspicious(year, month, day):
-    timestring = "{}{:0>2d}{:0>2d}".format(year, month, day)
-    suspicious_domains_set = set()
-    if os.path.exists("../result_data/{}domains.txt".format(timestring)):
-        with open("../result_data/{}domains.txt".format(timestring), "r") as f:
-            for r in f:
-                suspicious_domains_set.add(r.strip())
-        check_active_domains(suspicious_domains_set, timestring)
-    else:
-        init_domain_set = set()
-        # get all domains
-        for hour in range(24):
-            file_path = "{}{:0>2d}{:0>2d}{:0>2d}".format(year, month, day, hour)
-            if not os.path.exists("../result_data/{}".format(file_path)):
-                continue
-            with open("../result_data/{}".format(file_path), "r") as f:
-                for r in f:
-                    domain = r.strip().split(",")[1]
-                    init_domain_set.add(domain)
-        psl = PublicSuffixList()
-        domain_labels = []
-        labels_labels = []
-        i = 0
-        # get labels
-        domains_list = list(init_domain_set)
-        for d in domains_list:
-            s = d[:d.index(psl.publicsuffix(d)) - 1]
-            for l in s.split("."):
-                if len(l) > 0:
-                    domain_labels.append(l)
-                    labels_labels.append(i)
+class local_AGD_test():
+    def __init__(self):
+        self.AGDPath = "/home/public/2019-01-07-dgarchive_full"
+        self.psl = PublicSuffixList()
+
+    def one_day_test(self, day: str):
+        # get AGD data
+        AGDSet = set()
+        for filename in os.listdir(self.AGDPath):
+            df = pd.read_csv(os.path.join(self.AGDPath, filename), header=None)
+            for d in df.iloc[:, 0]:
+                AGDSet.add(d)
+        # AGDs_dict=dict()
+        # for filename in os.listdir(self.AGDPath):
+        #     with open(os.path.join(self.AGDPath, filename),"r") as f:
+        #         for line in f:
+        #             line_split=line.strip().split(",",1)
+        #             domain=line_split[0]
+        #             other_information=line_split[1]
+        #             info_list=AGDs_dict.get(domain)
+        #             if info_list is None:
+        #                 info_list=[]
+        #             info_list.append(other_information)
+        #             AGDs_dict[domain]=info_list
+        # AGDSet=set(AGDs_dict.keys())
+        print("AGDs statistic finish. The number={}".format(len(AGDSet)))
+        # get domains
+        domains_set = set()
+        for n in range(24):
+            filepath = os.path.join("../result_data", "{}{}".format(day, n))
+            if os.path.exists(filepath):
+                with open(filepath, "r") as f:
+                    for r in f:
+                        rsplit = r.strip().split(",")
+                        domain = rsplit[1]
+                        code = int(rsplit[2])
+                        if code != 3:
+                            domains_set.add(domain)
+        print("All domains statistic finish. The number = {}".format(len(domains_set)))
+        # search
+        result = []
+        for d in domains_set:
+            pri_d = self.psl.privatesuffix(d)
+            if d in AGDSet:
+                result.append("{}{}".format(d, '*'))
+            elif pri_d in AGDSet:
+                result.append(d)
+        print("search result. The number = {}".format(len(result)))
+        with open("../result_data/{}_one_day_temp".format(day), "w") as f:
+            f.write("\n".join(result))
+
+    def visit_domains_by_same_ip(self, day):
+        AGDSet = set()
+        for filename in os.listdir(self.AGDPath):
+            df = pd.read_csv(os.path.join(self.AGDPath, filename), header=None)
+            for d in df.iloc[:, 0]:
+                AGDSet.add(d)
+        print("AGDs statistic finish. The number={}".format(len(AGDSet)))
+        # get domains
+        domains_set = set()
+        ip_dict = dict()
+        for n in range(24):
+            filepath = os.path.join("../result_data", "{}{}".format(day, n))
+            if os.path.exists(filepath):
+                with open(filepath, "r") as f:
+                    for r in f:
+                        rsplit = r.strip().split(",")
+                        ip = rsplit[0]
+                        d = rsplit[1]
+                        code = int(rsplit[2])
+                        pri_d = self.psl.privatesuffix(d)
+                        if d in AGDSet or pri_d in AGDSet:
+                            domains_set.add(d)
+                        domains_list = ip_dict.get(ip)
+                        if domains_list is None:
+                            domains_list = ([], [])
+                            ip_dict[ip] = domains_list
+
+                        if code == 3:
+                            domains_list[1].append(d)
+                        else:
+                            domains_list[0].append(d)
+        print("All domains statistic finish. The number = {}".format(len(domains_set)))
+
+        with open("../result_data/{}_ip_dict.json".format(day), "w") as f:
+            f.write(json.dumps(ip_dict))
+
+
+def get_features(domain_list, psl):
+    domain_labels = []
+    domain_indexes = []
+    index = 0
+    for d in domain_list:
+        d = d[:d.rindex(psl.publicsuffix(d)) - 1]
+        if len(d) == 0:
+            continue
+        d_labels = d.split(".")
+        for l in d_labels:
+            domain_labels.append(l)
+            domain_indexes.append(index)
+        index = index + 1
+    label_features = extract_all_features(domain_labels)
+
+    minMax = MinMaxScaler()
+    label_features = minMax.fit_transform(label_features)
+    zero_array = np.zeros(32)
+    domain_features = []
+    i = 0
+    while i < len(label_features):
+        if i == len(label_features) - 1 or domain_indexes[i] != domain_indexes[i + 1]:
+            domain_features.append(np.append(zero_array, label_features[i]))
             i = i + 1
-
-        features_path = "../result_data/{}_features.npy".format(timestring)
-        if os.path.exists(features_path):
-            features = np.load(features_path)
         else:
-            features = extract_all_features(domain_labels)
-            np.save(features_path, features)
-
-        # classifier identifies labels
-        clf = joblib.load("../result_data/ac_model.m")
-        pred_labels = clf.predict(features)
-        domain_index = set()
-        for i in range(len(labels_labels)):
-            if pred_labels[i] == 1:
-                domain_index.add(labels_labels[i])
-        # get suspicious domains
-
-        for index in domain_index:
-            ps = psl.privatesuffix(domains_list[index])
-            if ps is None:
-                continue
-            suspicious_domains_set.add(ps)
-
-        print("{} domains".format(len(suspicious_domains_set)))
-
-        with open("../result_data/{}domains.txt".format(timestring), "w") as f:
-            f.write("\n".join(suspicious_domains_set))
-        print("save finish")
-        # dgarchive check
-        check_active_domains(suspicious_domains_set, timestring)
+            domain_features.append(np.append(label_features[i], label_features[i + 1]))
+            i = i + 2
+    return domain_features
 
 
-def lookup_100(domain_list: str, result, index):
-    login = ('iie_ac_cn', 'susanirabluffacuityelbow')
-    url = 'https://dgarchive.caad.fkie.fraunhofer.de/reverse'
-    response = requests.post(url, auth=login, data=domain_list)
-    if response.status_code != 200:
-        # print("{} finish ,code != 200".format(index))
-        return
-    else:
-        result_map = json.loads(response.content)
-        hits_list = result_map.get("hits")
-        if len(hits_list) > 0:
-            result[index] = hits_list
-    # print("{} check finish".format(index))
+def xmeans_cluster(domain_features):
+    initial_centers = kmeans_plusplus_initializer(domain_features, 2).initialize()
+    # Create instance of X-Means algorithm. The algorithm will start analysis from 2 clusters, the maximum
+    max_num = int(len(domain_features) / 2)
+    xmeans_instance = xmeans(domain_features, initial_centers, max_num)
+    xmeans_instance.process()
+    radiuses = []
+    cluster_num = 1
+    centers = xmeans_instance.get_centers()
+    for cluster in xmeans_instance.get_clusters():
+        cluster_num = cluster_num + 1
+        radius_total = 0.0
+        for i in cluster:
+            dist = np.linalg.norm(domain_features[i] - centers[cluster_num - 2])
+            radius_total += dist
+        radiuses.append(radius_total / len(cluster))
+    return xmeans_instance.get_centers(), radiuses, xmeans_instance.get_clusters()
 
 
-def get_nearby_AGDs(domain_dict, filename):
-    result = dict()
+def test_cluster():
+    psl = PublicSuffixList()
+    with open("../result_data/20180427_ip_dict.json", "r") as f:
+        ip_dict = json.loads(f.read())
+    for k, v in ip_dict.items():
+        if len(v[1]) > 1000:
+            nx = v[1]
+            ac = v[0]
+            break
+    nx_features = get_features(nx, psl)
+    centers, radiuses, cluster_indexes = xmeans_cluster(nx_features)
+    ac_features = get_features(ac, psl)
+    result = []
+    for i in range(len(centers)):
+        result.append([])
+    for a in range(len(ac_features)):
+        af = ac_features[a]
+        for i in range(len(centers)):
+            dist = np.linalg.norm(af - centers[i])
+            if dist <= radiuses[i]:
+                result[i].append(ac[a])
+    print(result)
 
-    for k, hits_list in domain_dict.items():
-        choice_list=[]
-        for hit_domain in hits_list:
-            validity = hit_domain.get("validity")
-            from_time = datetime.strptime(validity.get("from"), "%Y-%m-%d %H:%M:%S")
-            if from_time.year == 2018 and (from_time.month >= 1 and from_time.month <= 6):
-                choice_list.append(hit_domain)
-        result[k]=choice_list
 
-    with open(filename + ".json", "w") as f:
-        f.write(json.dumps(result))
-
-
-def check_active_domains(domains_set, date):
-    result = dict()
-    domain_list = list(domains_set)
-    for i in range(0, int(len(domains_set) / 100) + 1):
-        lookup_100(",".join(domain_list[i * 100:i * 100 + 100]), result, i)
-    with open("../result_data/{}labeleddomains.json".format(date), "w") as f:
-        f.write(json.dumps(result))
+def domains_map_features(filepath="../result_data/20180427_ip_dict.json"):
+    domain_set=set()
+    with open(filepath,'r') as f:
+        ip_dict=json.loads(f.read())
+    for k,v in ip_dict.items():
+        for d in v[0]:
+            domain_set.add(d)
+        for d in v[1]:
+            domain_set.add(d)
+    domain_list=list(domain_set)
+    print('domains number:{}'.format(len(domain_list)))
+    psl=PublicSuffixList()
+    domain_features=get_features(domain_list,psl)
+    np.save("../result_data/all_domain_features.npy",domain_features)
+    with open("../result_data/all_domain_list.txt","w") as f:
+        f.write('\n'.join(domain_list))
 
 if __name__ == "__main__":
-    get_suspicious(2018, 4, 29)
+    # lat = local_AGD_test()
+    # lat.visit_domains_by_same_ip(day="20180427")
+    domains_map_features()

@@ -4,6 +4,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.externals import joblib
 import numpy as np
 import pandas as pd
+from stringexperiment.char_feature import extract_all_features
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 class ModelExtractor():
@@ -34,6 +35,7 @@ class ModelExtractor():
         print("{} model test result:".format(type))
         clf=joblib.load("../result_data/{}_model.m".format(type))
         pred_labels=clf.predict(test_data)
+        print(pred_labels)
         print("accuracy:{}\nrecall:{}\nprecision:{}\nf1-score:{}" \
              .format(accuracy_score(pred_labels, real_labels), \
                      recall_score(pred_labels, real_labels), \
@@ -53,4 +55,6 @@ class ModelExtractor():
 
 if __name__=="__main__":
     modelextractor=ModelExtractor()
-    modelextractor.test()
+    # modelextractor.test()
+    features=extract_all_features(["www","xxfeee0d8","validttu"])
+    modelextractor.test_model(features,[0,1,0],"ac")

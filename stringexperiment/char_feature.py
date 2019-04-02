@@ -340,5 +340,5 @@ def extract_all_features_for_2(data,n_jobs=-1):
 
 if __name__ == "__main__":
     # print(extract_features_2(["baidu","qq"],ALL_FEATURES))
-    print(len(extract_all_features(["www","s180315349"])[1]))
+    print(extract_all_features(["www","s180315349"])[0])
     #print(extract_features("trlekmynqihxxhy6k",ALL_FEATURES))
