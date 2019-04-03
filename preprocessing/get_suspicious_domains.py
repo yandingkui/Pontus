@@ -128,10 +128,9 @@ def local_malicious_check(AGD_root="/home/public/2019-01-07-dgarchive_full"):
     with open("../result_data/all_domain_list.txt","r") as f:
         for r in f:
             d=r.strip()
-            pri_d=psl.privatesuffix(d)
-            if d in AGD_set or pri_d in AGD_set:
+            if d in AGD_set:
                 domains.append(d)
-    with open("../result_data/all_AGD_in_traffic","w") as f:
+    with open("../result_data/all_FQDN_AGD_in_traffic","w") as f:
         f.write("\n".join(domains))
 
 

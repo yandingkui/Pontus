@@ -152,48 +152,103 @@ def xmeans_cluster(domain_features):
     return xmeans_instance.get_centers(), radiuses, xmeans_instance.get_clusters()
 
 
-def test_cluster():
-    psl = PublicSuffixList()
-    with open("../result_data/20180427_ip_dict.json", "r") as f:
+def domains_map_features(filepath="../result_data/20180427_ip_dict.json"):
+    domain_set = set()
+    with open(filepath, 'r') as f:
         ip_dict = json.loads(f.read())
     for k, v in ip_dict.items():
-        if len(v[1]) > 1000:
-            nx = v[1]
-            ac = v[0]
-            break
-    nx_features = get_features(nx, psl)
-    centers, radiuses, cluster_indexes = xmeans_cluster(nx_features)
-    ac_features = get_features(ac, psl)
-    result = []
-    for i in range(len(centers)):
-        result.append([])
-    for a in range(len(ac_features)):
-        af = ac_features[a]
-        for i in range(len(centers)):
-            dist = np.linalg.norm(af - centers[i])
-            if dist <= radiuses[i]:
-                result[i].append(ac[a])
-    print(result)
-
-
-def domains_map_features(filepath="../result_data/20180427_ip_dict.json"):
-    domain_set=set()
-    with open(filepath,'r') as f:
-        ip_dict=json.loads(f.read())
-    for k,v in ip_dict.items():
         for d in v[0]:
             domain_set.add(d)
         for d in v[1]:
             domain_set.add(d)
-    domain_list=list(domain_set)
+    domain_list = list(domain_set)
     print('domains number:{}'.format(len(domain_list)))
-    psl=PublicSuffixList()
-    domain_features=get_features(domain_list,psl)
-    np.save("../result_data/all_domain_features.npy",domain_features)
-    with open("../result_data/all_domain_list.txt","w") as f:
+    psl = PublicSuffixList()
+    domain_features = get_features(domain_list, psl)
+    np.save("../result_data/all_domain_features.npy", domain_features)
+    with open("../result_data/all_domain_list.txt", "w") as f:
         f.write('\n'.join(domain_list))
 
+
+def test_cluster(ac_features, centers, radiuses):
+    result = []
+    for a in range(len(ac_features)):
+        af = ac_features[a]
+        c = -1
+        for i in range(len(centers)):
+            dist = np.linalg.norm(af - centers[i])
+            if i == 0:
+                min_dist = dist
+            if dist <= radiuses[i] and dist <= min_dist:
+                c = i
+                min_dist = dist
+        result.append(c)
+    return result
+
+
+def search_cluster_by_AGD():
+    # get features and domains
+    domain_dict = dict()
+    index = 0
+    with open("../result_data/all_domain_list.txt", "r") as f:
+        for r in f:
+            d = r.strip()
+            domain_dict[d] = index
+            index = index + 1
+    domain_features = np.load("../result_data/all_domain_features.npy")
+    # get active domains and nx domains from the same source ip
+    with open("../result_data/20180427_ip_dict.json", "r") as f:
+        ip_dict = json.loads(f.read())
+    # get all AGD
+    AGD_set = set()
+    with open("../result_data/all_AGD_in_traffic", "r") as f:
+        for r in f:
+            AGD_set.add(r.strip())
+    # get cluster
+    result=[]
+
+    for k, v in ip_dict.items():
+
+        AGDs = []
+        for acd in v[0]:
+            if acd in AGD_set:
+                AGDs.append(acd)
+        # cluster
+        if len(AGDs) > 0 and len(v[1]) >= 4:
+            ac_features = [domain_features[domain_dict.get(acd)] for acd in AGDs]
+            nx_features = [domain_features[domain_dict.get(nxd)] for nxd in v[1]]
+            centers, radiuses, clusters = xmeans_cluster(nx_features)
+            ac_cluster_index = test_cluster(ac_features, centers, radiuses)
+            for i in range(len(ac_cluster_index)):
+                if ac_cluster_index[i] != -1:
+                    nx_domains = [v[1][a] for a in clusters[ac_cluster_index[i]]]
+                    result.append("{},{}\n".format(AGDs[i],";".join(nx_domains)))
+                    # print({"domain":AGDs[i],"cluster_domains":",".join(nx_domains)})
+    with open("../result_data/malicious_data.csv","w") as f:
+        f.write("\n".join(result))
+
+
+def FQDN_filter_out():
+    AGDs=set()
+    with open("../result_data/all_FQDN_AGD_in_traffic","r") as f:
+        AGDs.update([r.strip() for r in f])
+    print(len(AGDs))
+    result=set()
+    ddset=set()
+    with open("../result_data/malicious_data.csv","r") as f:
+        for r in f:
+            if r=='\n':
+                continue
+            line=r.strip()
+            d=line.split(",")[0]
+            if d in AGDs:
+                ddset.add(d)
+                result.add(line)
+    with open("../result_data/filter","w") as f:
+        f.write("\n".join(result))
+    for r in ddset:
+        print(r)
+
+
 if __name__ == "__main__":
-    # lat = local_AGD_test()
-    # lat.visit_domains_by_same_ip(day="20180427")
-    domains_map_features()
+    FQDN_filter_out()
