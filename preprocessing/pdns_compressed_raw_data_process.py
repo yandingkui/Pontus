@@ -14,10 +14,10 @@ import traceback
 pdns_project_dir = os.path.abspath("..")
 pdns_project_dir=os.path.abspath("/home/public/DNS_Project/")
 
-pdns_raw_data_dir = pdns_project_dir + '/pdns_gddx_compressed/'
-
+# pdns_raw_data_dir = pdns_project_dir + '/pdns_gddx_compressed/'
+pdns_raw_data_dir = pdns_project_dir
 # the data range is a list of [province, date, begin_hour, end_hour]
-pdns_raw_data_ranges = [['gdyd', '20180430', 0, 23],['gdyd', '20180501', 0, 23],['gdyd', '20180502', 0, 23]]
+pdns_raw_data_ranges = [['gddx', '20171031', 0, 23]]
 # package_dir = os.path.join(pdns_project_dir, 'Package')
 
 
@@ -38,11 +38,13 @@ class DataProcessing(Process):
         while (True):
             self.lock.acquire()
             if (self.file_path_queue.empty() == False):
-
                 queue_item = self.file_path_queue.get()
                 self.lock.release()
                 ff=str(queue_item[0])
-                result_file_name=ff[ff.rindex("-")+1:ff.index(".txt.bz2")-2]
+                if ff.__contains__("-"):
+                    result_file_name=ff[ff.rindex("-")+1:ff.index(".txt.bz2")-2]
+                else:
+                    result_file_name = ff[:ff.index(".txt.bz2") - 2]
                 print(result_file_name)
                 hour_result=[]
                 hmap=dict()
@@ -70,9 +72,12 @@ class DataProcessing(Process):
                         except:
                             print("error info:{}\n file:{}".format(traceback.print_exc(),file_path))
                     file_point.close()
-
-                with open("../result_data/" + result_file_name, mode="w", encoding="utf8") as f:
+                day_string=result_file_name[:len(result_file_name)-2]
+                if not os.path.exists("../result_data/" +day_string):
+                    os.mkdir("../result_data/" + day_string)
+                with open("../result_data/{}/{}".format(day_string,result_file_name) , mode="w", encoding="utf8") as f:
                     f.write("\n".join(hour_result))
+
             else:
                 self.lock.release()
                 break
@@ -94,10 +99,16 @@ class DataFilePathReading(Process):
             end_hour = data_range[3]
 
             data_province_dir = os.path.join(self.pdns_raw_data_dir, province)
-            data_province_date_dir = os.path.join(data_province_dir, 'dt=' + date)
+            if province=="gdyd":
+                data_province_date_dir = os.path.join(data_province_dir, 'dt=' + date)
+            else:
+                data_province_date_dir = os.path.join(data_province_dir, date)
 
             for i in range(begin_hour, end_hour+1):
                 data_province_date_hour_dir = os.path.join(data_province_date_dir, 'hour=' + '%02d' % i)
+                if os.path.exists(data_province_date_hour_dir) == False:
+                    print(data_province_date_hour_dir)
+                    continue
                 filenames = os.listdir(data_province_date_hour_dir)
                 item=[]
                 for filename in filenames:
