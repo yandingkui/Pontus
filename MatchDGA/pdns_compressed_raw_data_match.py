@@ -13,12 +13,33 @@ from util import MyJsonEncoder
 from preprocessing.DomainFilter import Filter
 import traceback
 pdns_project_dir = os.path.abspath("..")
-pdns_project_dir=os.path.abspath("/home/public/DNS_Project/")
+pdns_project_dir=os.path.abspath("/media/mnt/pdns_gddx_compressed/")
 
 # pdns_raw_data_dir = pdns_project_dir + '/pdns_gddx_compressed/'
 pdns_raw_data_dir = pdns_project_dir
 # the data range is a list of [province, date, begin_hour, end_hour]
-pdns_raw_data_ranges = [['gddx', '20171031', 0, 23]]
+pdns_raw_data_ranges = [['gdyd', '20180321', 0, 23],
+                        ['gdyd', '20180322', 0, 23],
+                        ['gdyd', '20180323', 0, 23],
+                        ['gdyd', '20180324', 0, 23],
+                        ['gdyd', '20180422', 0, 23],
+                        ['gdyd', '20180423', 0, 23],
+                        ['gdyd', '20180424', 0, 23],
+                        ['gdyd', '20180425', 0, 23],
+                        ['gdyd', '20180426', 0, 23],
+                        ['gdyd', '20180427', 0, 23],
+                        ['gdyd', '20180428', 0, 23],
+                        ['gdyd', '20180429', 0, 23],
+                        ['gdyd', '20180430', 0, 23],
+                        ['gdyd', '20180501', 0, 23],
+                        ['gdyd', '20180502', 0, 23],
+                        ['gdyd', '20180503', 0, 23],
+                        ['gdyd', '20180504', 0, 23],
+                        ['gdyd', '20180505', 0, 23],
+                        ['gdyd', '20180506', 0, 23],
+                        ['gdyd', '20180507', 0, 23],
+                        ['gdyd', '20180508', 0, 23],
+                        ['gdyd', '20180509', 0, 23]]
 # package_dir = os.path.join(pdns_project_dir, 'Package')
 
 
