@@ -27,11 +27,12 @@ thread_number = int(cpu_number)
 
 class DataProcessing(Process):
 
-    def __init__(self, file_path_queue, process_index, lock):
+    def __init__(self, file_path_queue, process_index, lock,match):
         super().__init__()
         self.file_path_queue = file_path_queue
         self.process_index = process_index
         self.lock = lock
+        self.match=match
 
 
     def run(self):
@@ -55,7 +56,9 @@ class DataProcessing(Process):
                             line = line.decode().strip()
                             linesplit = line.split(',')
                             querydomain = linesplit[3].strip().lower()
-
+                            if(filter.isValidDomain(querydomain) and self.match.judge(querydomain)):
+                                self.match.saveFile(line)
+                                print(querydomain)
 
                         except:
                             print("error info:{}\n file:{}".format(traceback.print_exc(),file_path))

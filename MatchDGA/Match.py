@@ -23,20 +23,3 @@ class Match():
         with open(filepath,"a+") as f:
             f.write(line+"\n")
         self.lock.release()
-
-
-
-
-
-
-
-
-
-
-
-
-
-if __name__=="__main__":
-    match=Match()
-
-
