@@ -47,37 +47,21 @@ class DataProcessing(Process):
                 else:
                     result_file_name = ff[:ff.index(".txt.bz2") - 2]
                 print(result_file_name)
-                hour_result=[]
-                hmap=dict()
+
                 for file_path in queue_item:
                     file_point = bz2.open(file_path, 'r')
                     for line in file_point:
                         try:
                             line = line.decode().strip()
                             linesplit = line.split(',')
-                            source_ip = linesplit[0].strip().lower()
                             querydomain = linesplit[3].strip().lower()
-                            rcode = linesplit[16].strip()
-                            answer = linesplit[19].strip().lower()
-                            flag=hmap.get(querydomain)
-                            if  flag is None:
-                                if filter.Two_Three_level_domain(querydomain) and filter.isValidDomain(querydomain):
-                                    hour_result.append(",".join((source_ip, querydomain, rcode, answer)))
-                                    hmap[querydomain]=True
-                                else:
-                                    hmap[querydomain]=False
-                            elif  flag==True:
-                                hour_result.append(",".join((source_ip, querydomain, rcode, answer)))
-                            else:
-                                continue
+
+
                         except:
                             print("error info:{}\n file:{}".format(traceback.print_exc(),file_path))
                     file_point.close()
                 day_string=result_file_name[:len(result_file_name)-2]
-                if not os.path.exists("../result_data/" +day_string):
-                    os.mkdir("../result_data/" + day_string)
-                with open("../result_data/{}/{}".format(day_string,result_file_name) , mode="w", encoding="utf8") as f:
-                    f.write("\n".join(hour_result))
+
 
             else:
                 self.lock.release()
