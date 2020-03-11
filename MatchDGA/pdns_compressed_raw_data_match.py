@@ -3,6 +3,7 @@ import sys
 sys.path.append("..")
 
 from multiprocessing import cpu_count, Process, Queue, Lock
+from MatchDGA import Match
 import os
 import time
 import bz2
@@ -110,9 +111,10 @@ if __name__ == '__main__':
     DataFilePathReading_process.start()
     time.sleep(1)
     lock = Lock()
+    match = Match.Match()
     DataProcessing_process_list = []
     for i in range(0, thread_number):
-        DataProcessing_process_list.append(DataProcessing(file_path_queue, i, lock))
+        DataProcessing_process_list.append(DataProcessing(file_path_queue, i, lock,match))
         DataProcessing_process_list[i].start()
 
     for i in range(0, thread_number):
