@@ -63,7 +63,7 @@ def getData(bfiles,AGDfile):
 
 def saveVectors():
     root_dir = "../data_sets/"
-    result_path="../result_data/"
+    result_path="../result_data/bi/"
     bafiles=[("{}{}".format(root_dir, 'yd_20180427'),"{}AGD{}.json".format(root_dir, 0)),("{}{}".format(root_dir,"Aleax"),"{}AGD{}.json".format(root_dir, 0)),("{}{}".format(root_dir, "Aleax2LD"),"{}wordlist.json".format(root_dir))]
 
     for baf in bafiles:
@@ -79,7 +79,7 @@ def saveVectors():
 
 # dataset="Aleax2LD,Aleax,yd_20180427"
 def getDataFromFile(dataset):
-    result_dir="../result_data/"
+    result_dir="../result_data/back/"
     front="{}{}".format(result_dir, dataset)
     x_train=np.load("{}{}".format(front,"x_train.npy"))
     y_train=np.load("{}{}".format(front,"y_train.npy"))
@@ -194,4 +194,4 @@ def cnn_lstm():
     print("recall={}".format(recall_score(y_test, y_predict)))
 
 if __name__=="__main__":
-    biLSTM()
+    saveVectors()

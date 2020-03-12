@@ -94,14 +94,12 @@ class CutWords:
         count_backward = len(backward_cutlist)
 
         def compute_single(word_list):
-            num = 0
-            for word in word_list:
-                if len(word) == 1:
-                    num += 1
-            return num
+            lens=[len(i) for i in word_list]
+            print("方差：{}".format(np.var(lens)))
+            return np.var(lens)
 
         if count_forward == count_backward:
-            if compute_single(forward_cutlist) > compute_single(backward_cutlist):
+            if compute_single(forward_cutlist) >= compute_single(backward_cutlist):
                 return backward_cutlist
             else:
                 return forward_cutlist
@@ -185,7 +183,9 @@ def lstm_getSingleFea(d:str):
     if(len(d)==0):
         return vector
     cuter = CutWords()
-    wordlist = cuter.max_forward_cut(d)
+    # wordlist = cuter.max_forward_cut(d)
+    # wordlist = cuter.max_backward_cut(d)
+    wordlist = cuter.max_biward_cut(d)
 
     vi = 63
     for i in range(len(wordlist) - 1, -1, -1):
@@ -206,5 +206,9 @@ def lstm_getAllFea(domains):
 
 
 if __name__=="__main__":
-    a="www.baidu.com"
-    print(a.replace(".",""))
+    domain="aliexpress"
+    c=CutWords()
+    print(c.max_forward_cut(domain))
+    print(c.max_backward_cut(domain))
+
+    print(c.max_biward_cut(domain))
