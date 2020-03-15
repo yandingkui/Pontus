@@ -85,7 +85,7 @@ def getType():
     map=dict()
     for filename in os.listdir(root_dir):
         print(filename)
-        type=filename[:filename.index("_dga")]
+        type=filename[:filename.index(".csv")]
         df = pd.read_csv(os.path.join(root_dir, filename), header=None, error_bad_lines=False)
         for d in df.iloc[:, 0]:
             if map.__contains__(d):
