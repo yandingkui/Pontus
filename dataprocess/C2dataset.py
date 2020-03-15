@@ -1,6 +1,7 @@
 import collections
 import requests
-
+import os
+import pandas as pd
 def filterData():
     count=0
     infectedIP=set()
@@ -79,7 +80,27 @@ def getTotal():
                 total = total + 1
     print(total)
 
-
+def getType():
+    root_dir = "/home/public/2019-01-07-dgarchive_full/"
+    map=dict()
+    for filename in os.listdir(root_dir):
+        type=filename[:filename.index("_dga.csv")]
+        df = pd.read_csv(os.path.join(root_dir, filename), header=None, error_bad_lines=False)
+        for d in df.iloc[:, 0]:
+            if map.__contains__(d):
+                l=map.get(d)
+                l.append(type)
+            else:
+                map[d]=[type]
+    allType=set()
+    with open("./C2.log", "r") as f:
+        for r in f:
+            rs = r.strip().split("#")
+            if rs[1] == "True":
+                allType.add(map.get(rs[0]))
+    print(len(allType))
+    print(allType)
 
 if __name__=="__main__":
-    maliciousC2_test()
+    filename="bamital_dga.csv"
+    print(filename[:filename.index("_dga.csv")])
