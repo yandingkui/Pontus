@@ -102,5 +102,4 @@ def getType():
     print(allType)
 
 if __name__=="__main__":
-    filename="bamital_dga.csv"
-    print(filename[:filename.index("_dga.csv")])
+    getType()
