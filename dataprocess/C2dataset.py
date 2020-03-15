@@ -36,14 +36,14 @@ def virus_total_test(d):
     response = requests.get(url, params=params)
     flag = False
     scan = response.json().get("scans")
-
+    info=""
     if scan != None:
         for (k, v) in scan.items():
             if v.get('detected') == True:
                 flag = True
-                information="{}:{}".format(k,v)
+                info="{}:{}".format(k,v)
                 break
-    return flag,information,response.json()
+    return flag,info,response.json()
 
 def maliciousC2_test(filepath='../result_data/dga_A'):
     alldomains=set()
