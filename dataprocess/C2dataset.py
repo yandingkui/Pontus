@@ -53,7 +53,7 @@ def maliciousC2_test(filepath='../result_data/dga_A'):
             queryDomain=items[3].strip().lower()
             alldomains.add(queryDomain)
     hashandledomains=set()
-    with open("../result_data/C2.log","r") as c2f:
+    with open("./C2.log","r") as c2f:
         for r in c2f:
             rs=r.strip().split("#")
             hashandledomains.add(rs[0].strip().lower())
