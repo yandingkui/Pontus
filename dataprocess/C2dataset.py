@@ -84,6 +84,7 @@ def getType():
     root_dir = "/home/public/2019-01-07-dgarchive_full/"
     map=dict()
     for filename in os.listdir(root_dir):
+        print(filename)
         type=filename[:filename.index("_dga")]
         df = pd.read_csv(os.path.join(root_dir, filename), header=None, error_bad_lines=False)
         for d in df.iloc[:, 0]:
