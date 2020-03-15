@@ -36,12 +36,14 @@ def virus_total_test(d):
     response = requests.get(url, params=params)
     flag = False
     scan = response.json().get("scans")
+
     if scan != None:
         for (k, v) in scan.items():
             if v.get('detected') == True:
                 flag = True
+                information="{}:{}".format(k,v)
                 break
-    return flag,response.json()
+    return flag,information,response.json()
 
 def maliciousC2_test(filepath='../result_data/dga_A'):
     alldomains=set()
@@ -50,12 +52,18 @@ def maliciousC2_test(filepath='../result_data/dga_A'):
             items=line.strip().split(",")
             queryDomain=items[3].strip().lower()
             alldomains.add(queryDomain)
-    print("totalnum:{}".format(len(alldomains)))
+    hashandledomains=set()
+    with open("../result_data/C2.log","r") as c2f:
+        for r in c2f:
+            rs=r.strip().split("#")
+            hashandledomains.add(rs[0].strip().lower())
+    handledomains=alldomains.difference(hashandledomains)
+    print("totalnum:{}".format(len(handledomains)))
     logfile=open("./C2.log","a+")
     testnum=0
-    for d in alldomains:
-        flag,infojson=virus_total_test(d)
-        logfile.write("{},{},{}\n".format(d,flag,infojson))
+    for d in handledomains:
+        flag,info,jsonmap=virus_total_test(d)
+        logfile.write("{}#{}#{}#{}\n".format(d,flag,info,jsonmap))
         testnum=testnum+1
         print(testnum)
     logfile.close()
