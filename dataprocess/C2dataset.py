@@ -41,15 +41,25 @@ def virus_total_test(d):
             if v.get('detected') == True:
                 flag = True
                 break
-    return flag
+    return flag,response.json()
 
 def maliciousC2_test(filepath='../result_data/dga_A'):
+    alldomains=set()
     with open(filepath,"r") as f:
         for line in f:
             items=line.strip().split(",")
             queryDomain=items[3].strip().lower()
-            if virus_total_test(queryDomain):
-                print(queryDomain)
+            alldomains.add(queryDomain)
+    print("所有匹配到的C2域名：{}".format(len(alldomains)))
+    logfile=open("./C2.log","a+")
+    testnum=0
+    for d in alldomains:
+        flag,infojson=virus_total_test(d)
+        logfile.write("{},{},{}\n".format(d,flag,infojson))
+        testnum=testnum+1
+        print(testnum)
+    logfile.close()
+
 
 if __name__=="__main__":
     maliciousC2_test()
