@@ -50,7 +50,7 @@ def maliciousC2_test(filepath='../result_data/dga_A'):
             items=line.strip().split(",")
             queryDomain=items[3].strip().lower()
             alldomains.add(queryDomain)
-    print("所有匹配到的C2域名：{}".format(len(alldomains)))
+    print("totalnum:{}".format(len(alldomains)))
     logfile=open("./C2.log","a+")
     testnum=0
     for d in alldomains:
