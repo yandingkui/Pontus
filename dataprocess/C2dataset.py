@@ -98,7 +98,8 @@ def getType():
         for r in f:
             rs = r.strip().split("#")
             if rs[1] == "True":
-                allType.add(map.get(rs[0]))
+                for t in map.get(rs[0]):
+                    allType.add(t)
     print(len(allType))
     print(allType)
 
