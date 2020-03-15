@@ -1,4 +1,5 @@
 import collections
+import requests
 
 def filterData():
     count=0
@@ -26,10 +27,29 @@ def counter(filepath='../result_data/dga_A'):
     print(len(counter))
     print(counter)
 
+def virus_total_test(d):
+    url = 'https://www.virustotal.com/vtapi/v2/url/report'
+    params = {'apikey': 'f76bdbc3755b5bafd4a18436bebf6a47d0aae6d2b4284f118077aa0dbdbd76a4',
+              'resource': d}
+    # params = {'apikey': '8380506dbd784fa6eec4ccdd8a1906979285f3c98df7265bff827a1920ba1a40',
+    #           'resource': d}
+    response = requests.get(url, params=params)
+    flag = False
+    scan = response.json().get("scans")
+    if scan != None:
+        for (k, v) in scan.items():
+            if v.get('detected') == True:
+                flag = True
+                break
+    return flag
 
-
+def maliciousC2_test(filepath='../result_data/dga_A'):
+    with open(filepath,"r") as f:
+        for line in f:
+            items=line.strip().split(",")
+            queryDomain=items[3].strip().lower()
+            if virus_total_test(queryDomain):
+                print(queryDomain)
 
 if __name__=="__main__":
-    counter()
-
-
+    maliciousC2_test()
