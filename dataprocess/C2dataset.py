@@ -69,5 +69,17 @@ def maliciousC2_test(filepath='../result_data/dga_A'):
     logfile.close()
 
 
+
+def getTotal():
+    total = 0
+    with open("./C2.log", "r") as f:
+        for r in f:
+            rs = r.strip().split("#")
+            if rs[1] == "True":
+                total = total + 1
+    print(total)
+
+
+
 if __name__=="__main__":
     maliciousC2_test()
