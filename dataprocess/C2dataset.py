@@ -23,7 +23,8 @@ def counter(filepath='../result_data/dga_A'):
         for line in f:
             items=line.strip().split(",")
             counter[items[3]]=counter[items[3]]+1
-    print(counter.most_common(10))
+    print(len(counter))
+    print(counter)
 
 
 
