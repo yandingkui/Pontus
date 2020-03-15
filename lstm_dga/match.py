@@ -95,11 +95,11 @@ class CutWords:
 
         def compute_single(word_list):
             lens=[len(i) for i in word_list]
-            print("方差：{}".format(np.var(lens)))
+            # print("方差：{}".format(np.var(lens)))
             return np.var(lens)
 
         if count_forward == count_backward:
-            if compute_single(forward_cutlist) >= compute_single(backward_cutlist):
+            if compute_single(forward_cutlist) > compute_single(backward_cutlist):
                 return backward_cutlist
             else:
                 return forward_cutlist
