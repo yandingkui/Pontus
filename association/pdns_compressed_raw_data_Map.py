@@ -106,6 +106,7 @@ class DataProcessing(Process):
                         except:
                             print("error info:{}\n file:{}".format(traceback.print_exc(),file_path))
                     file_point.close()
+                    print(result_file_name+"  finish hahhahah")
                     redis_domain.close()
                     redis_ip.close()
                     redis_CNAME.close()
