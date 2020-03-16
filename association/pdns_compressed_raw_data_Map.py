@@ -20,7 +20,7 @@ pdns_project_dir=os.path.abspath("/media/mnt/pdns_gddx_compressed/")
 # pdns_raw_data_dir = pdns_project_dir + '/pdns_gddx_compressed/'
 pdns_raw_data_dir = pdns_project_dir
 # the data range is a list of [province, date, begin_hour, end_hour]
-pdns_raw_data_ranges = [['gdyd', '20180321', 0, 1]]
+pdns_raw_data_ranges = [['gdyd', '20180321', 0, 0]]
 # pdns_raw_data_ranges = [['gdyd', '20180321', 0, 23],
 #                         ['gdyd', '20180322', 0, 23],
 #                         ['gdyd', '20180323', 0, 23],
@@ -88,8 +88,8 @@ class DataProcessing(Process):
                             querydomain = linesplit[3].strip().lower()
                             type=linesplit[4].strip()
                             time=linesplit[11].strip()
-                            isMULL=linesplit[14].strip()
-                            answer =linesplit[18].strip().lower()
+                            isMULL=linesplit[15].strip()
+                            answer =linesplit[19].strip().lower()
                             keys=",".join((querydomain,answer))
                             print("key={},value={}".format(keys,querydomain))
                             if(type=='A' and  isMULL != 'MULL' and len(answer)>0):
