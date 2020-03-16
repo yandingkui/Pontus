@@ -20,7 +20,7 @@ pdns_project_dir=os.path.abspath("/media/mnt/pdns_gddx_compressed/")
 # pdns_raw_data_dir = pdns_project_dir + '/pdns_gddx_compressed/'
 pdns_raw_data_dir = pdns_project_dir
 # the data range is a list of [province, date, begin_hour, end_hour]
-pdns_raw_data_ranges = [['gdyd', '20180321', 0, 23]]
+pdns_raw_data_ranges = [['gdyd', '20180321', 0, 1]]
 # pdns_raw_data_ranges = [['gdyd', '20180321', 0, 23],
 #                         ['gdyd', '20180322', 0, 23],
 #                         ['gdyd', '20180323', 0, 23],
@@ -47,7 +47,7 @@ pdns_raw_data_ranges = [['gdyd', '20180321', 0, 23]]
 
 
 cpu_number = cpu_count()
-thread_number = int(cpu_number)
+thread_number = 1
 
 
 class DataProcessing(Process):
@@ -101,8 +101,10 @@ class DataProcessing(Process):
                                         if re.match(ipv4_pattern,ip):
                                             redis_domain.sadd(querydomain,ip)
                                             redis_ip.hset(ip,querydomain,time)
+                                            print("domain map IP:{}{}".format(querydomain,ip))
                                         else:
                                             redis_CNAME.sadd(querydomain,ip)
+                                            print("CNAME:{}{}".format(querydomain, ip))
                         except:
                             print("error info:{}\n file:{}".format(traceback.print_exc(),file_path))
                     file_point.close()
