@@ -15,15 +15,7 @@ from pyclustering.cluster.xmeans import xmeans
 from pyclustering.cluster.center_initializer import kmeans_plusplus_initializer
 from sklearn.preprocessing import MinMaxScaler
 from multiprocessing import Pool
+import redis
 
 class labelclassifier():
-
-    def __init__(self):
-        pass
-
-    def get_benign_labels(self):
-        pass
-
-    def get_AGD_labels(self):
-        pass
-
+    pass
