@@ -75,7 +75,7 @@ class DataProcessing(Process):
                 print(result_file_name)
 
                 for file_path in queue_item:
-
+                    print("is handling {}".format(file_path))
                     file_point = bz2.open(file_path, 'r')
                     answerset = set()
                     redis_domain=redis.Redis(host='127.0.0.1',port=6379,db=1)
@@ -91,10 +91,12 @@ class DataProcessing(Process):
                             isMULL=linesplit[14].strip()
                             answer =linesplit[18].strip().lower()
                             keys=",".join((querydomain,answer))
+                            print("key={},value={}".format(keys,querydomain))
                             if(type=='A' and  isMULL != 'MULL' and len(answer)>0):
                                 if answerset.__contains__(keys):
                                     continue
                                 else:
+                                    answerset.add(keys)
                                     ips=answer.split(";")
                                     ipv4_pattern = "(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])"
                                     for ip in ips:
