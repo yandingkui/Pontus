@@ -20,7 +20,7 @@ pdns_project_dir=os.path.abspath("/media/mnt/pdns_gddx_compressed/")
 # pdns_raw_data_dir = pdns_project_dir + '/pdns_gddx_compressed/'
 pdns_raw_data_dir = pdns_project_dir
 # the data range is a list of [province, date, begin_hour, end_hour]
-pdns_raw_data_ranges = [['gdyd', '20180321', 0, 0]]
+# pdns_raw_data_ranges = [['gdyd', '20180321', 0, 0]]
 # pdns_raw_data_ranges = [['gdyd', '20180321', 0, 23],
 #                         ['gdyd', '20180322', 0, 23],
 #                         ['gdyd', '20180323', 0, 23],
@@ -45,9 +45,11 @@ pdns_raw_data_ranges = [['gdyd', '20180321', 0, 0]]
 #                         ['gdyd', '20180509', 0, 23]]
 # package_dir = os.path.join(pdns_project_dir, 'Package')
 
+pdns_raw_data_ranges = [['gdyd', '20180501', 0, 23],
+                        ['gdyd', '20180502', 0, 23]]
 
 cpu_number = cpu_count()
-thread_number = 1
+thread_number = int(cpu_number)
 
 
 class DataProcessing(Process):
@@ -67,15 +69,15 @@ class DataProcessing(Process):
             if (self.file_path_queue.empty() == False):
                 queue_item = self.file_path_queue.get()
                 self.lock.release()
-                ff=str(queue_item[0])
-                if ff.__contains__("-"):
-                    result_file_name=ff[ff.rindex("-")+1:ff.index(".txt.bz2")-2]
-                else:
-                    result_file_name = ff[:ff.index(".txt.bz2") - 2]
-                print(result_file_name)
+                # ff=str(queue_item[0])
+                # if ff.__contains__("-"):
+                #     result_file_name=ff[ff.rindex("-")+1:ff.index(".txt.bz2")-2]
+                # else:
+                #     result_file_name = ff[:ff.index(".txt.bz2") - 2]
+                # print(result_file_name)
 
                 for file_path in queue_item:
-                    print("is handling {}".format(file_path))
+                    # print("is handling {}".format(file_path))
                     file_point = bz2.open(file_path, 'r')
                     answerset = set()
                     redis_domain=redis.Redis(host='127.0.0.1',port=6379,db=1)
@@ -91,7 +93,7 @@ class DataProcessing(Process):
                             isMULL=linesplit[15].strip()
                             answer =linesplit[19].strip().lower()
                             keys=",".join((querydomain,answer))
-                            print("key={},value={}".format(keys,querydomain))
+                            # print("key={},value={}".format(keys,querydomain))
                             if(type=='A' and  isMULL != 'MULL' and len(answer)>0):
                                 if answerset.__contains__(keys):
                                     continue
@@ -103,14 +105,15 @@ class DataProcessing(Process):
                                         if re.match(ipv4_pattern,ip):
                                             redis_domain.sadd(querydomain,ip)
                                             redis_ip.hset(ip,querydomain,time)
-                                            print("domain map IP:{}{}".format(querydomain,ip))
+                                            # print("domain map IP:{}{}".format(querydomain,ip))
                                         else:
                                             redis_CNAME.sadd(querydomain,ip)
-                                            print("CNAME:{}{}".format(querydomain, ip))
+                                            # print("CNAME:{}{}".format(querydomain, ip))
                         except:
                             print("error info:{}\n file:{}".format(traceback.print_exc(),file_path))
                     file_point.close()
-                    print(result_file_name+"  finish hahhahah")
+
+                    # print(result_file_name+"  finish hahhahah")
                     redis_domain.close()
                     redis_ip.close()
                     redis_CNAME.close()
