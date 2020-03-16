@@ -52,12 +52,12 @@ thread_number = 1
 
 class DataProcessing(Process):
 
-    def __init__(self, file_path_queue, process_index, lock,match):
+    def __init__(self, file_path_queue, process_index, lock):
         super().__init__()
         self.file_path_queue = file_path_queue
         self.process_index = process_index
         self.lock = lock
-        self.match=match
+
 
 
     def run(self):
@@ -158,10 +158,10 @@ if __name__ == '__main__':
     DataFilePathReading_process.start()
     time.sleep(1)
     lock = Lock()
-    match = Match.Match()
+
     DataProcessing_process_list = []
     for i in range(0, thread_number):
-        DataProcessing_process_list.append(DataProcessing(file_path_queue, i, lock,match))
+        DataProcessing_process_list.append(DataProcessing(file_path_queue, i, lock))
         DataProcessing_process_list[i].start()
 
     for i in range(0, thread_number):
