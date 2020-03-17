@@ -86,7 +86,7 @@ def saveVectors():
 
 # dataset="Aleax2LD,Aleax,yd_20180427"
 def getDataFromFile(dataset):
-    result_dir="../result_data/"
+    result_dir="../result_data/bi/"
     front="{}{}".format(result_dir, dataset)
     x_train=np.load("{}{}".format(front,"x_train.npy"))
     y_train=np.load("{}{}".format(front,"y_train.npy"))
