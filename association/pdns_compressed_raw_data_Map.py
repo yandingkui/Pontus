@@ -45,8 +45,11 @@ pdns_raw_data_dir = pdns_project_dir
 #                         ['gdyd', '20180509', 0, 23]]
 # package_dir = os.path.join(pdns_project_dir, 'Package')
 
-pdns_raw_data_ranges = [['gdyd', '20180501', 0, 23],
-                        ['gdyd', '20180502', 0, 23]]
+pdns_raw_data_ranges = [['gdyd', '20180503', 0, 23],
+                        ['gdyd', '20180504', 0, 23],
+                        ['gdyd', '20180505', 0, 23],
+                        ['gdyd', '20180506', 0, 23],
+                        ['gdyd', '20180507', 0, 23]]
 
 cpu_number = cpu_count()
 thread_number = int(cpu_number)
