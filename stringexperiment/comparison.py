@@ -31,6 +31,7 @@ from stringexperiment.pontus import pontus
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 from collections import Counter
+from activedomain import DataSetDomains
 
 class comparison():
 
@@ -318,76 +319,92 @@ class comparison():
         plt.savefig("../result_data/cs_wordlist.eps", format='eps', dpi=1000, bbox_inches='tight')
         print("finish")
 
+    def testactive(self):
+        p = pontus()
 
+        trainDGADomain, testDGADomain, trainBenignDomain, testBenignDomain =DataSetDomains.getDomains()
 
-    def to_percent(self,temp, position):
-        return '%1.0f' % (100 * temp) + '%'
+        trainDomains = trainDGADomain + trainBenignDomain
+        trainLabel = np.concatenate((np.ones(len(trainDGADomain)), np.zeros(len(trainBenignDomain))))
 
-    def CDF(self):
-        allDGA = []
-        with open("../data_sets/all2LDAGD", "r") as f:
-            for r in f:
-                allDGA.append(r.strip())
-        benign = []
-        with open("../data_sets/Aleax2LD", "r") as f:
-            for r in f:
-                benign.append(r.strip())
+        testDomains = testDGADomain + testBenignDomain
+        testLabel = np.concatenate((np.ones(len(testDGADomain)), np.zeros(len(testBenignDomain))))
 
-        D = random.sample(allDGA, 1000)
-        B = random.sample(benign, 1000)
+        # for i in range(len(testDomains)):
+        #     print("{} {}".format(testDomains[i],testLabel[i]))
+        # print("FANCI")
 
-        result0 = []
-        result1 = []
-        for d in D:
-            result0.append()
-            # result1.append(_top_100k_readability(d))
-        # print(result0)
-        # print(max(result0))
-        # print(min(result0))
-        x = np.arange(0, 0.15, 0.005)
-        cDGA = Counter()
+        # self.perdiction(trainDomains,trainLabel,testDomains,testLabel,"FANCI")
+        self.perdiction(trainDomains, trainLabel, testDomains, testLabel, "pontus")
 
-        cBen = Counter()
-        for i in result0:
-            for t in x:
-                if i <= t:
-                    cDGA[t] += 1
-                else:
-                    cDGA[t] += 0
-
-        result3 = []
-        result4 = []
-        for d in B:
-            result3.append(_readability(d))
-            # result4.append(_top_100k_readability(d))
-
-        for i in result3:
-            for t in x:
-                if i <= t:
-                    cBen[t] += 1
-                else:
-                    cBen[t] += 0
-
-        y1 = []
-        y2 = []
-        for i in x:
-            y1.append(float(cDGA.get(i)) / 1000.0)
-            y2.append(float(cBen.get(i)) / 1000.0)
-
-        # plt.xlim(xmax=0.15, xmin=0)
-        # plt.ylim(ymax=0.15, ymin=0)
-
-        plt.xlabel('the value of the Probability Summation Based on Article')
-        plt.ylabel('ratio')
-        plt.plot(x, y1, c="red", label="AGDs", linestyle='-', marker='4')
-        plt.plot(x, y2, c="green", label="Benign domain names", linestyle=":")
-
-        plt.gca().yaxis.set_major_formatter(FuncFormatter(to_percent))
-        plt.legend(loc="lower right")
-
-        plt.grid()  # 生成网格
-        plt.savefig("../result_data/cs_{}.eps".format("sandian"),
-                    format='eps', dpi=1000, bbox_inches='tight')
+    # def to_percent(self,temp, position):
+    #     return '%1.0f' % (100 * temp) + '%'
+    #
+    # def CDF(self):
+    #     allDGA = []
+    #     with open("../data_sets/all2LDAGD", "r") as f:
+    #         for r in f:
+    #             allDGA.append(r.strip())
+    #     benign = []
+    #     with open("../data_sets/Aleax2LD", "r") as f:
+    #         for r in f:
+    #             benign.append(r.strip())
+    #
+    #     D = random.sample(allDGA, 1000)
+    #     B = random.sample(benign, 1000)
+    #
+    #     result0 = []
+    #     result1 = []
+    #     for d in D:
+    #         result0.append()
+    #         # result1.append(_top_100k_readability(d))
+    #     # print(result0)
+    #     # print(max(result0))
+    #     # print(min(result0))
+    #     x = np.arange(0, 0.15, 0.005)
+    #     cDGA = Counter()
+    #
+    #     cBen = Counter()
+    #     for i in result0:
+    #         for t in x:
+    #             if i <= t:
+    #                 cDGA[t] += 1
+    #             else:
+    #                 cDGA[t] += 0
+    #
+    #     result3 = []
+    #     result4 = []
+    #     for d in B:
+    #         result3.append(_readability(d))
+    #         # result4.append(_top_100k_readability(d))
+    #
+    #     for i in result3:
+    #         for t in x:
+    #             if i <= t:
+    #                 cBen[t] += 1
+    #             else:
+    #                 cBen[t] += 0
+    #
+    #     y1 = []
+    #     y2 = []
+    #     for i in x:
+    #         y1.append(float(cDGA.get(i)) / 1000.0)
+    #         y2.append(float(cBen.get(i)) / 1000.0)
+    #
+    #     # plt.xlim(xmax=0.15, xmin=0)
+    #     # plt.ylim(ymax=0.15, ymin=0)
+    #
+    #     plt.xlabel('the value of the Probability Summation Based on Article')
+    #     plt.ylabel('ratio')
+    #     plt.plot(x, y1, c="red", label="AGDs", linestyle='-', marker='4')
+    #     plt.plot(x, y2, c="green", label="Benign domain names", linestyle=":")
+    #
+    #     plt.gca().yaxis.set_major_formatter(FuncFormatter(to_percent))
+    #     plt.legend(loc="lower right")
+    #
+    #     plt.grid()  # 生成网格
+    #     plt.savefig("../result_data/cs_{}.eps".format("sandian"),
+    #                 format='eps', dpi=1000, bbox_inches='tight')
 
 if __name__ == "__main__":
     C = comparison()
