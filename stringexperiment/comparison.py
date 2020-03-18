@@ -320,7 +320,7 @@ class comparison():
         print("finish")
 
     def testactive(self):
-        p = pontus()
+        # p = pontus()
 
         trainDGADomain, testDGADomain, trainBenignDomain, testBenignDomain =DataSetDomains.getDomains()
 
@@ -414,4 +414,4 @@ if __name__ == "__main__":
     # print("yd")
     # C.classification_comparasion(bfile="yd_20180427", AGDfile="AGD.json")
     # C.addConfusion()
-    C.word_list_roc()
+    C.testactive()
