@@ -323,6 +323,10 @@ class comparison():
         # p = pontus()
 
         trainDGADomain, testDGADomain, trainBenignDomain, testBenignDomain =DataSetDomains.getDomains()
+        print(len(trainDGADomain))
+        print(len(testDGADomain))
+        print(len(trainBenignDomain))
+        print(len(testBenignDomain))
 
         trainDomains = trainDGADomain + trainBenignDomain
         trainLabel = np.concatenate((np.ones(len(trainDGADomain)), np.zeros(len(trainBenignDomain))))
