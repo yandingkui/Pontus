@@ -5,3 +5,4 @@ def getSingleFeature(domain):
     redis_ip = redis.Redis(host='127.0.0.1', port=6379, db=2)
     redis_CNAME = redis.Redis(host='127.0.0.1', port=6379, db=3)
 
+
