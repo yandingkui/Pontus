@@ -12,12 +12,13 @@ def getDomains():
     lastNum=int(len(DGAs)*0.8)
     random.shuffle(DGAs)
     random.shuffle(benignDomains)
-    return DGAs[:lastNum], DGAs[lastNum:],benignDomains[:lastNum],benignDomains[lastNum]
+    return DGAs[:lastNum], DGAs[lastNum:],benignDomains[:lastNum],benignDomains[lastNum:]
 
 
 
 if __name__=="__main__":
     ds=["a","v","b","kkkk"]
+    ds1=["c"]
+    print(ds+ds1)
 
-    print(ds[:3])
-    print(ds[3:])
+
