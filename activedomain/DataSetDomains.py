@@ -20,3 +20,4 @@ if __name__=="__main__":
     with open("../dataprocess/C2.log","r") as f:
         DGAs=[ r.strip().split("#")[0] for r in f]
 
+    print(DGAs)
