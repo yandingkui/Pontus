@@ -17,8 +17,6 @@ def getDomains():
 
 
 if __name__=="__main__":
-    ds=["a","v","b","kkkk"]
-    ds1=["c"]
-    print(ds+ds1)
-
+    with open("../dataprocess/C2.log","r") as f:
+        DGAs=[ r.strip().split("#")[0] for r in f]
 
