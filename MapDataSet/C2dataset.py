@@ -107,8 +107,13 @@ def getType():
 def getAllArecords(result_file="../result_data/dga_virustotal_A"):
 
     resultFile=open(result_file,"w",encoding="utf-8")
+    AGDs=set()
     with open("../C2.log","r") as f:
-        AGDs=[r.strip().split("#")[0].lower() for r in f]
+        for r in f:
+            items=r.strip().split("#")
+            if items[1].strip()=="True":
+                AGDs.add(items[0].strip())
+
     with open("../result_data/dga_A","r") as af:
         for line in af:
             lines=line.strip().split(",")
