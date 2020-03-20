@@ -136,7 +136,8 @@ def getDateC2(result_file="../result_data/dga_virustotal_A"):
                 resultMap[linetime]=domainSet
             else:
                 domainSet.add(lines[3].strip().lower())
-    print(resultMap)
+    for k,v in resultMap.items():
+        print("{}:{}".format(k,len(v)))
 
 
 
