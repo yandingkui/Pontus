@@ -103,5 +103,19 @@ def getType():
     print(len(allType))
     print(allType)
 
+#取得C2域名的A记录
+def getAllArecords(result_file="../result_data/dga_virustotal_A"):
+
+    resultFile=open(result_file,"w",encoding="utf-8")
+    with open("../C2.log","r") as f:
+        AGDs=[r.strip().split("#")[0].lower() for r in f]
+    with open("../result_data/dga_A","r") as af:
+        for line in af:
+            lines=line.strip().split(",")
+            if lines[3].strip() in AGDs:
+                resultFile.write(line)
+    resultFile.close()
+
+
 if __name__=="__main__":
-    getType()
+    getAllArecords()
