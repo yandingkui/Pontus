@@ -121,6 +121,25 @@ def getAllArecords(result_file="../result_data/dga_virustotal_A"):
                 resultFile.write(line)
     resultFile.close()
 
+# 查看C2域名对应的日期
+
+def getDateC2(result_file="../result_data/dga_virustotal_A"):
+    resultMap=dict()
+    with open(result_file,"r") as f:
+        for line in f:
+            lines=line.strip().split(",")
+            linetime=lines[11].strip()[:8]
+            domainSet=resultMap.get(linetime)
+            if domainSet is None:
+                domainSet=set()
+                domainSet.add(lines[3].strip().lower())
+                resultMap[linetime]=domainSet
+            else:
+                domainSet.add(lines[3].strip().lower())
+    print(resultMap)
+
+
+
 
 if __name__=="__main__":
-    getAllArecords()
+    getDateC2()
