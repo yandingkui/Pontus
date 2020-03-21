@@ -12,10 +12,10 @@ def getDomains():
         benignDomains=[r.strip() for r in fb]
 
     benignDomains=random.sample(benignDomains,len(AGDs))
-    lastNum=int(len(DGAs)*0.8)
-    random.shuffle(DGAs)
+    lastNum=int(len(AGDs)*0.8)
+    random.shuffle(AGDs)
     random.shuffle(benignDomains)
-    return DGAs[:lastNum], DGAs[lastNum:],benignDomains[:lastNum],benignDomains[lastNum:]
+    return AGDs[:lastNum], AGDs[lastNum:],benignDomains[:lastNum],benignDomains[lastNum:]
 
 
 
