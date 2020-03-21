@@ -1,9 +1,12 @@
 import  random
 
 def getDomains():
-
-    with open("../dataprocess/C2.log","r") as f:
-        DGAs=[ r.strip().split("#")[0] for r in f]
+    AGDs=[]
+    with open("../C2.log", "r") as f:
+        for r in f:
+            items = r.strip().split("#")
+            if items[1].strip() == "True":
+                AGDs.append(items[0].strip())
 
     with open("/home/yandingkui/Pontus_old/data_sets/Aleax","r") as fb:
         benignDomains=[r.strip() for r in fb]
