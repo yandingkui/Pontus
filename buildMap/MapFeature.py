@@ -5,6 +5,18 @@ def getFeature(domain):
     redisIPDB = redis.Redis(host='127.0.0.1', port=6379, db=2)
     redisCNAMEDB = redis.Redis(host='127.0.0.1', port=6379, db=3)
 
+
+    ipset=redisDomainDB.smembers(domain)
+    ipgetDomainset=[]
+    for ip in ipset:
+        ipgetDomainset.append(redisIPDB.hgetall())
+
+
+    cnameset=redisCNAMEDB.smembers(domain)
+
+
+if __name__=="__main__":
+
     ttl_map=dict()
 
     with open("../result_data/dga_virustotal_A","r") as f:
@@ -22,15 +34,3 @@ def getFeature(domain):
                 ttls.add(ttl)
     for k,v in ttl_map.items():
         print("{}:{}".format(k,len(v)))
-
-    ipset=redisDomainDB.smembers(domain)
-    ipgetDomainset=[]
-    for ip in ipset:
-        ipgetDomainset.append(redisIPDB.hgetall())
-
-
-    cnameset=redisCNAMEDB.smembers(domain)
-
-
-if __name__=="__main__":
-    getFeature()
