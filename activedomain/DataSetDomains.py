@@ -11,6 +11,8 @@ def getDomains():
     with open("/home/yandingkui/Pontus_old/data_sets/Aleax","r") as fb:
         benignDomains=[r.strip() for r in fb]
     random.shuffle(AGDs)
+    for d in AGDs:
+        print(d)
     benignDomains=random.sample(benignDomains,len(AGDs))
     lastNum=int(len(AGDs)*0.8)
     random.shuffle(AGDs)
