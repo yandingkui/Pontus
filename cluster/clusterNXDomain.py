@@ -1,7 +1,7 @@
 import sys
 
 sys.path.append("..")
-from util.MyPublicSuffixList import MyPublicSuffixList
+import publicsuffixlist
 from pyclustering.cluster.xmeans import xmeans
 from pyclustering.cluster.center_initializer import kmeans_plusplus_initializer
 import numpy as np
@@ -44,7 +44,7 @@ class Cluster():
         result = dict()
         index = 0
         for d in domains:
-            length = len(d[:d.rindex(MyPublicSuffixList.psl.publicsuffix(d))].split('.'))
+            length = len(d[:d.rindex(psl.publicsuffix(d))].split('.'))
             l = result.get(length)
             if not l:
                 l = []
@@ -108,3 +108,5 @@ class Cluster():
                 for i in range(len(v)):
                     domain_cluster.append([[domains[v[i]]], features[v[i]], 1.0, labels[v[i]], 0, 0])
         return domain_cluster
+
+
