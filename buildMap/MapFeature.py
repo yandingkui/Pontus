@@ -46,12 +46,14 @@ def getFeature(domain,nowdate):
     vector=np.zeros(11)
     ipset=redisDomainDB.smembers(domain)
 
+    alldays = []
+    weekdays = []
+    priratios = []
+
     if (ipset is not None) and len(ipset)>0:
         # 域名解析IP的个数
         vector[0] = len(ipset)
-        alldays=[]
-        weekdays=[]
-        priratios=[]
+
 
         #ip承载的
         for ip in ipset:
