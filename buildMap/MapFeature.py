@@ -59,8 +59,9 @@ def getFeature(domain,nowdate):
         weeknum=0
 
         for k,v in ip_domain_map.items():
-            print(v)
-            domain_time=datetime.datetime.strptime(str(v),'%Y%m%d%H%M%S')
+            domain_time_str=str(v)
+            vs=domain_time_str[domain_time_str.index("'")+1:domain_time_str.rindex("'")]
+            domain_time=datetime.datetime.strptime(vs,'%Y%m%d%H%M%S')
             if domain_time>beforeWeekDate:
                 weeknum=weeknum+1
             domain_pri=psl.privatesuffix(k)
