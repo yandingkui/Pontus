@@ -412,10 +412,10 @@ class comparison():
 
 if __name__ == "__main__":
     C = comparison()
-    # C.testAleax2LD()
+    C.testAleax2LD()
     # print("dx")
     # C.classification_comparasion(bfile="dx_20171105",AGDfile="AGD6.json")
     # print("yd")
     # C.classification_comparasion(bfile="yd_20180427", AGDfile="AGD.json")
     # C.addConfusion()
-    C.testactive()
+    # C.testactive()
