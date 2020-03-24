@@ -78,7 +78,7 @@ def getFeature(domain,nowdate):
 
         weekdays.append(weeknum)
         priratios.append(max(pri_map.values())/ipAllNum)
-
+    return vector
 
     #解析IP一周内的解析情况
     if len(alldays)>0:
