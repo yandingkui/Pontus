@@ -61,11 +61,15 @@ def getFeature(domain,nowdate):
         for k,v in ip_domain_map.items():
             domain_time_str=str(v)
             vs=domain_time_str[domain_time_str.index("'")+1:domain_time_str.rindex("'")]
+            domain_name_str=str(k)
+            dns = domain_name_str[domain_name_str.index("'") + 1:domain_name_str.rindex("'")]
+
             domain_time=datetime.datetime.strptime(vs,'%Y%m%d%H%M%S')
+            #如果该域名在一个星期之内
             if domain_time>beforeWeekDate:
                 weeknum=weeknum+1
-            domain_pri=psl.privatesuffix(k)
-
+            #统计子域名个数
+            domain_pri=psl.privatesuffix(dns)
             pri_num=pri_map.get(domain_pri)
             if pri_num is None:
                 pri_map[domain_pri]=1
@@ -100,6 +104,6 @@ def getFeature(domain,nowdate):
 
 
 if __name__=="__main__":
-    getFeature("www.baidu.com",datetime.datetime.strptime('20180507','%Y%m%d'))
+    print(publicsuffixlist.PublicSuffixList(accept_unknown=False).privatesuffix("www.baidu.com"))
 
 
