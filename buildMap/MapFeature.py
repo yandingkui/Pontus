@@ -7,12 +7,17 @@ import publicsuffixlist
 from activedomain import DataSetDomains
 import traceback
 from sklearn.externals.joblib.parallel import Parallel, delayed
+from stringexperiment import pontus,comparison
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 def getDomanListFeature(domain_list):
-    ttl_map=get_ttlmap()
-
-    for domain in domain_list:
-        dfea=np.zeros(13)
+    parallel = Parallel(n_jobs=-1, verbose=1)
+    feature_matrix = parallel(
+        delayed(getFeature)(d, datetime.datetime.strptime('20180507', "%Y%m%d"))
+        for d in domain_list
+    )
+    return feature_matrix
 
 
 
@@ -110,22 +115,43 @@ def getFeature(domain,nowdate):
 
     return vector
 
+
+
 if __name__=="__main__":
-    AGDs = []
-    with open("../C2.log", "r") as f:
-        for r in f:
-            items = r.strip().split("#")
-            if items[1].strip() == "True":
-                AGDs.append(items[0].strip())
 
-    print(len(AGDs))
+    trainDGADomain, testDGADomain, trainBenignDomain, testBenignDomain = DataSetDomains.getDomains()
+    print(len(trainDGADomain))
+    print(len(testDGADomain))
+    print(len(trainBenignDomain))
+    print(len(testBenignDomain))
 
-    parallel = Parallel(n_jobs=-1, verbose=1)
-    feature_matrix = parallel(
-        delayed(getFeature)(d,datetime.datetime.strptime('20180507',"%Y%m%d"))
-        for d in AGDs
-    )
+    trainDomains = trainDGADomain + trainBenignDomain
 
-    print(len(np.array(feature_matrix)))
+    trainLabel = np.concatenate((np.ones(len(trainDGADomain)), np.zeros(len(trainBenignDomain))))
+
+    testDomains = testDGADomain + testBenignDomain
+    testLabel = np.concatenate((np.ones(len(testDGADomain)), np.zeros(len(testBenignDomain))))
+
+    ppp=pontus.pontus()
+    str_train_features = ppp.getDomainFeatures(trainDomains)
+    map_train_features=getDomanListFeature(trainDomains)
+
+    train_features=np.append(str_train_features, map_train_features, axis=1)
+    print(str_train_features[0])
+    print(map_train_features[0])
+    print(train_features[0])
+    clf = GradientBoostingClassifier(max_depth=18, n_estimators=150, max_features=32)
+    clf.fit(train_features, trainLabel)
+
+    str_pred_features = ppp.getDomainFeatures(testDomains)
+    map_pred_features=getDomanListFeature(testDomains)
+    pre_features = np.append(str_pred_features, map_pred_features, axis=1)
+
+    predict_result = clf.predict(pre_features)
+
+    ppp.printMetric(testLabel,predict_result)
+
+
+
 
 
