@@ -10,7 +10,7 @@ from sklearn.externals.joblib.parallel import Parallel, delayed
 from stringexperiment import pontus,comparison
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import RandomForestClassifier
-
+import random
 def getDomanListFeature(domain_list):
     parallel = Parallel(n_jobs=-1, verbose=1)
     feature_matrix = parallel(
@@ -127,7 +127,7 @@ if __name__=="__main__":
 
     trainDomains = trainDGADomain + trainBenignDomain
 
-    trainLabel = np.concatenate((np.ones(len(trainDGADomain)), np.zeros(len(trainBenignDomain))))
+    trainLabel_noshuffle = np.concatenate((np.ones(len(trainDGADomain)), np.zeros(len(trainBenignDomain))))
 
     testDomains = testDGADomain + testBenignDomain
     testLabel = np.concatenate((np.ones(len(testDGADomain)), np.zeros(len(testBenignDomain))))
@@ -136,10 +136,19 @@ if __name__=="__main__":
     str_train_features = ppp.getDomainFeatures(trainDomains)
     map_train_features=getDomanListFeature(trainDomains)
 
-    train_features=np.append(str_train_features, map_train_features, axis=1)
+
+
+
+    train_features_noshuffle=np.append(str_train_features, map_train_features, axis=1)
     print(str_train_features[0])
     print(map_train_features[0])
-    print(train_features[0])
+    print(train_features_noshuffle[0])
+
+    index = range(len(trainDomains))
+    random.shuffle(index)
+    train_features=[train_features_noshuffle[i] for i in index]
+    trainLabel=[trainLabel_noshuffle[i] for i in index]
+
     clf = GradientBoostingClassifier(max_depth=18, n_estimators=150, max_features=32)
     clf.fit(train_features, trainLabel)
 
@@ -150,8 +159,3 @@ if __name__=="__main__":
     predict_result = clf.predict(pre_features)
 
     ppp.printMetric(testLabel,predict_result)
-
-
-
-
-
