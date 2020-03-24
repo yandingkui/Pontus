@@ -36,6 +36,7 @@ def getFeature(domain,nowdate):
     redisCNAMEDB = redis.Redis(host='127.0.0.1', port=6379, db=3)
     offset = datetime.timedelta(days=7)
     beforeWeekDate=nowdate-offset
+    print(beforeWeekDate)
     psl = publicsuffixlist.PublicSuffixList(accept_unknown=False)
 
     vector=np.zeros(11)
