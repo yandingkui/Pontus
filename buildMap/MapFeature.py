@@ -74,7 +74,7 @@ def getFeature(domain,nowdate):
             if pri_num is None:
                 pri_map[domain_pri]=1
             else:
-                pri_num[domain_pri]=pri_num+1
+                pri_map[domain_pri]=pri_num+1
 
         weekdays.append(weeknum)
         priratios.append(max(pri_map.values())/ipAllNum)
