@@ -149,7 +149,7 @@ if __name__=="__main__":
     train_features=[train_features_noshuffle[i] for i in index]
     trainLabel=[trainLabel_noshuffle[i] for i in index]
 
-    clf = GradientBoostingClassifier(max_depth=18, n_estimators=150, max_features=32)
+    clf = GradientBoostingClassifier(max_depth=18, n_estimators=280, max_features=32)
     clf.fit(train_features, trainLabel)
 
     str_pred_features = ppp.getDomainFeatures(testDomains)
