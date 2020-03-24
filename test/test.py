@@ -1,3 +1,5 @@
+import sys
+sys.path.append("..")
 from pyclustering.cluster.xmeans import xmeans
 from pyclustering.cluster.center_initializer import kmeans_plusplus_initializer
 import numpy as np
@@ -5,6 +7,7 @@ from preprocessing.DomainFilter import Filter
 import os
 import bz2
 import json
+
 
 def xmeans_model(sample):
     amount_initial_centers = 2
