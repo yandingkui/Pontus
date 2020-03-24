@@ -10,7 +10,7 @@ import numpy as np
 class Cluster():
     #将域名抽象成向量
     def get_features(self, domains: list):
-        return extract_all_features(domains)
+        pass
     #
     def xmeans_model(self, sample):
         amount_initial_centers = 2
@@ -108,5 +108,3 @@ class Cluster():
                 for i in range(len(v)):
                     domain_cluster.append([[domains[v[i]]], features[v[i]], 1.0, labels[v[i]], 0, 0])
         return domain_cluster
-
-
