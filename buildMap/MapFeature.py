@@ -1,7 +1,10 @@
+import sys
+sys.path.append("..")
 import redis
 import numpy as np
 import datetime
 import publicsuffixlist
+from activedomain import DataSetDomains
 
 
 def getDomanListFeature(domain_list):
@@ -36,7 +39,7 @@ def getFeature(domain,nowdate):
     redisCNAMEDB = redis.Redis(host='127.0.0.1', port=6379, db=3)
     offset = datetime.timedelta(days=7)
     beforeWeekDate=nowdate-offset
-    print(beforeWeekDate)
+
     psl = publicsuffixlist.PublicSuffixList(accept_unknown=False)
 
     vector=np.zeros(11)
@@ -104,9 +107,14 @@ def getFeature(domain,nowdate):
     return vector
 
 if __name__=="__main__":
-    print(publicsuffixlist.PublicSuffixList(accept_unknown=False).privatesuffix("www.baidu.com"))
-    v=getFeature("www.baidu.com",datetime.datetime.strptime("20180507",'%Y%m%d'))
-    for i in v:
-        print(i)
+    AGDs = []
+    with open("../C2.log", "r") as f:
+        for r in f:
+            items = r.strip().split("#")
+            if items[1].strip() == "True":
+                AGDs.append(items[0].strip())
+    for d in AGDs:
+        v=getFeature("www.baidu.com",datetime.datetime.strptime("20180507",'%Y%m%d'))
+        print(v)
 
 
