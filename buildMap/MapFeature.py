@@ -6,7 +6,7 @@ import datetime
 import publicsuffixlist
 from activedomain import DataSetDomains
 import traceback
-
+from sklearn.externals.joblib.parallel import Parallel, delayed
 
 def getDomanListFeature(domain_list):
     ttl_map=get_ttlmap()
@@ -117,10 +117,15 @@ if __name__=="__main__":
             items = r.strip().split("#")
             if items[1].strip() == "True":
                 AGDs.append(items[0].strip())
-    for d in AGDs:
-        try:
-            v=getFeature(d,datetime.datetime.strptime("20180507",'%Y%m%d'))
-        except:
-            print("error info:{}\n domain:{}".format(traceback.print_exc(),d))
+
+    print(len(AGDs))
+
+    parallel = Parallel(n_jobs=-1, verbose=1)
+    feature_matrix = parallel(
+        delayed(getFeature)(d,datetime.datetime.strptime('20180507',"%Y%m%d"))
+        for d in AGDs
+    )
+
+    print(len(np.array(feature_matrix)))
 
 
