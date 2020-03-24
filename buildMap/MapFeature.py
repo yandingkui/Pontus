@@ -144,7 +144,7 @@ if __name__=="__main__":
     print(map_train_features[0])
     print(train_features_noshuffle[0])
 
-    index = range(len(trainDomains))
+    index=[i for i in range(len(trainDomains))]
     random.shuffle(index)
     train_features=[train_features_noshuffle[i] for i in index]
     trainLabel=[trainLabel_noshuffle[i] for i in index]

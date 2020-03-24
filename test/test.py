@@ -8,6 +8,7 @@ from preprocessing.DomainFilter import Filter
 import os
 import bz2
 import json
+import random
 
 
 def xmeans_model(sample):
@@ -115,4 +116,6 @@ if __name__=="__main__":
     # map['20170000']=3
     # for k in sorted(map.keys()):
     #     print(map.get(k))
-    testActiveDomain(["20180507"])
+    index=[i for i in range(4)]
+    random.shuffle(index)
+    print(index)
