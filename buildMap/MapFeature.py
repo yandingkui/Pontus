@@ -5,6 +5,7 @@ import numpy as np
 import datetime
 import publicsuffixlist
 from activedomain import DataSetDomains
+import traceback
 
 
 def getDomanListFeature(domain_list):
@@ -118,6 +119,6 @@ if __name__=="__main__":
         try:
             v=getFeature(d,datetime.datetime.strptime("20180507",'%Y%m%d'))
         except:
-            print(d)
+            print("error info:{}\n domain:{}".format(traceback.print_exc(),d))
 
 
