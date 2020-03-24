@@ -89,9 +89,11 @@ def run(hourPath):
                     continue
 
             print("{}  read finish".format(bzf))
+        print("total:{}".format(total))
         print("all domains:{}".format(len(visit_map)))
         print("all active :{}".format(len(ttl_map)))
         print("all NX:{}".format(len(nx_map)))
+
 
 
 
