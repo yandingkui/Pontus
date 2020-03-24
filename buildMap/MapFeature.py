@@ -57,7 +57,7 @@ def getFeature(domain,nowdate):
 
         weeknum=0
 
-        for k,v in ip_domain_map:
+        for k,v in ip_domain_map.items():
             domain_time=datetime.datetime.strptime(v,'%Y%m%d%H%M%S')
             if domain_time>beforeWeekDate:
                 weeknum=weeknum+1
