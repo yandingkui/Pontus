@@ -78,7 +78,7 @@ def getFeature(domain,nowdate):
 
         weekdays.append(weeknum)
         priratios.append(max(pri_map.values())/ipAllNum)
-    return vector
+
 
     #解析IP一周内的解析情况
     if len(alldays)>0:
@@ -101,7 +101,7 @@ def getFeature(domain,nowdate):
     if cnameset is not None :
         vector[10]=1
 
-
+    return vector
 
 if __name__=="__main__":
     print(publicsuffixlist.PublicSuffixList(accept_unknown=False).privatesuffix("www.baidu.com"))
