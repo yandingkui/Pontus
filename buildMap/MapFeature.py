@@ -105,5 +105,8 @@ def getFeature(domain,nowdate):
 
 if __name__=="__main__":
     print(publicsuffixlist.PublicSuffixList(accept_unknown=False).privatesuffix("www.baidu.com"))
+    v=getFeature("www.baidu.com",datetime.datetime.strptime("20180507",'%Y%m%d'))
+    for i in v:
+        print(i)
 
 
