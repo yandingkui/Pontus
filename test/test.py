@@ -37,7 +37,7 @@ def run(hourPath):
         else:
             fiveMinFiles.append(l)
         # 读取数据
-    print("读取数据完毕")
+    print(u"读取数据完毕")
 
     for k,v in pathMap.items():
         total=0
@@ -87,7 +87,7 @@ def run(hourPath):
                 except:
                     continue
 
-            print("{}读取完毕".format(bzf))
+            print(u"{}读取完毕".format(bzf))
         print("all domains:{}".format(len(visit_map)))
         print("all active :{}".format(len(ttl_map)))
         print("all NX:{}".format(len(nx_map)))
