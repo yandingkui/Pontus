@@ -43,3 +43,6 @@ def xgboost_test():
     print('F1-score: %.4f' % metrics.f1_score(test_y, y_pred))
     print('Precesion: %.4f' % metrics.precision_score(test_y, y_pred))
     print(metrics.confusion_matrix(test_y, y_pred))
+
+if __name__=="__main__":
+    xgboost_test()
