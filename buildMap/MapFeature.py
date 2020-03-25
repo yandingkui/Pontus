@@ -192,7 +192,7 @@ if __name__=="__main__":
     train_features=[train_features_noshuffle[i] for i in index]
     trainLabel=[trainLabel_noshuffle[i] for i in index]
 
-    clf = GradientBoostingClassifier(max_depth=18, n_estimators=240, max_features=36)
+    clf = GradientBoostingClassifier(max_depth=24, n_estimators=260, max_features=36)
     # # clf=RandomForestClassifier(n_estimators=755, max_features=28, criterion='gini')
     clf.fit(train_features, trainLabel)
 
