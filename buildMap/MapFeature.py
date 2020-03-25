@@ -133,7 +133,7 @@ def xgboost_test(train_x, test_x, train_y, test_y):
 
     params = {'booster': 'gbtree',
               'objective': 'binary:logistic',
-              'eval_metric': 'acc',
+              'eval_metric': 'auc',
               'max_depth': 12,
               'lambda': 10,
               'subsample': 0.75,
@@ -179,8 +179,6 @@ if __name__=="__main__":
     ppp=pontus.pontus()
     str_train_features = ppp.getDomainFeatures(trainDomains)
     map_train_features=getDomanListFeature(trainDomains)
-
-
 
 
     train_features_noshuffle=np.append(str_train_features, map_train_features, axis=1)
