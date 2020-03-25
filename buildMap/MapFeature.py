@@ -191,7 +191,7 @@ if __name__=="__main__":
     train_features=[train_features_noshuffle[i] for i in index]
     trainLabel=[trainLabel_noshuffle[i] for i in index]
 
-    # clf = GradientBoostingClassifier(max_depth=18, n_estimators=240, max_features=32)
+    clf = GradientBoostingClassifier(max_depth=18, n_estimators=240, max_features=36)
     # # clf=RandomForestClassifier(n_estimators=755, max_features=28, criterion='gini')
     # clf.fit(train_features, trainLabel)
 
@@ -199,8 +199,8 @@ if __name__=="__main__":
     map_pred_features=getDomanListFeature(testDomains)
     pre_features = np.append(str_pred_features, map_pred_features, axis=1)
 
-    xgboost_test(train_features,pre_features,trainLabel,testLabel)
+    # xgboost_test(train_features,pre_features,trainLabel,testLabel)
     #
-    # predict_result = clf.predict(pre_features)
-    #
-    # ppp.printMetric(testLabel,predict_result)
+    predict_result = clf.predict(pre_features)
+
+    ppp.printMetric(testLabel,predict_result)
