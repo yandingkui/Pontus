@@ -145,7 +145,10 @@ def xgboost_test(train_x, test_x, train_y, test_y):
               'silent': 1}
 
     watchlist = [(dtrain, 'train')]
+    starttime = datetime.datetime.now()
     bst = xgb.train(params, dtrain, num_boost_round=10, evals=watchlist)
+    endtime = datetime.datetime.now()
+    print((endtime - starttime).seconds)
     # 输出概率
     ypred = bst.predict(dtest)
 
@@ -191,10 +194,12 @@ if __name__=="__main__":
     random.shuffle(index)
     train_features=[train_features_noshuffle[i] for i in index]
     trainLabel=[trainLabel_noshuffle[i] for i in index]
-
+    print("GBDT")
     clf = GradientBoostingClassifier(max_depth=24, n_estimators=260, max_features=36)
-    # # clf=RandomForestClassifier(n_estimators=755, max_features=28, criterion='gini')
+    starttime = datetime.datetime.now()
     clf.fit(train_features, trainLabel)
+    endtime = datetime.datetime.now()
+    print((endtime - starttime).seconds)
 
     str_pred_features = ppp.getDomainFeatures(testDomains)
     map_pred_features=getDomanListFeature(testDomains)
@@ -204,5 +209,17 @@ if __name__=="__main__":
     #
     predict_result = clf.predict(pre_features)
 
-    print("GBDT")
+    print("random forest")
     ppp.printMetric(testLabel,predict_result)
+    starttime=datetime.datetime.now()
+    clf=RandomForestClassifier(n_estimators=755, max_features=28, criterion='gini')
+
+
+    clf.fit(train_features, trainLabel)
+    endtime = datetime.datetime.now()
+    print((endtime - starttime).seconds)
+    predict_result = clf.predict(pre_features)
+
+
+
+    ppp.printMetric(testLabel, predict_result)
