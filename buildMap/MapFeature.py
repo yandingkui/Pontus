@@ -150,9 +150,10 @@ def xgboost_test(train_x, test_x, train_y, test_y):
     ypred = bst.predict(dtest)
 
     # 设置阈值, 输出一些评价指标，选择概率大于0.5的为1，其他为0类
-    y_pred = (ypred >= 0.5) * 1
+    y_pred = (ypred > 0.5) * 1
 
     from sklearn import metrics
+    print("xgboost")
     print('AUC: %.4f' % metrics.roc_auc_score(test_y, ypred))
     print('ACC: %.4f' % metrics.accuracy_score(test_y, y_pred))
     print('Recall: %.4f' % metrics.recall_score(test_y, y_pred))
@@ -199,8 +200,9 @@ if __name__=="__main__":
     map_pred_features=getDomanListFeature(testDomains)
     pre_features = np.append(str_pred_features, map_pred_features, axis=1)
 
-    # xgboost_test(train_features,pre_features,trainLabel,testLabel)
+    xgboost_test(train_features,pre_features,trainLabel,testLabel)
     #
     predict_result = clf.predict(pre_features)
 
+    print("GBDT")
     ppp.printMetric(testLabel,predict_result)
