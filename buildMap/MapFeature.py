@@ -10,6 +10,7 @@ from sklearn.externals.joblib.parallel import Parallel, delayed
 from stringexperiment import pontus,comparison
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import RandomForestClassifier
+import xgboost as xgb
 import random
 def getDomanListFeature(domain_list):
     parallel = Parallel(n_jobs=-1, verbose=1)
@@ -116,6 +117,49 @@ def getFeature(domain,nowdate):
     return vector
 
 
+def xgboost_test(train_x, test_x, train_y, test_y):
+    # iris = datasets.load_iris()
+    # data = iris.data[:100]
+    #
+    #
+    # # 一共有100个样本数据, 维度为4维
+    # label = iris.target[:100]
+    #
+    #
+    # train_x, test_x, train_y, test_y = train_test_split(data, label, random_state=0)
+
+    dtrain = xgb.DMatrix(train_x, label=train_y)
+    dtest = xgb.DMatrix(test_x)
+
+    params = {'booster': 'gbtree',
+              'objective': 'binary:logistic',
+              'eval_metric': 'auc',
+              'max_depth': 4,
+              'lambda': 10,
+              'subsample': 0.75,
+              'colsample_bytree': 0.75,
+              'min_child_weight': 2,
+              'eta': 0.025,
+              'seed': 0,
+              'nthread': 8,
+              'silent': 1}
+
+    watchlist = [(dtrain, 'train')]
+    bst = xgb.train(params, dtrain, num_boost_round=5, evals=watchlist)
+    # 输出概率
+    ypred = bst.predict(dtest)
+
+    # 设置阈值, 输出一些评价指标，选择概率大于0.5的为1，其他为0类
+    y_pred = (ypred >= 0.5) * 1
+
+    from sklearn import metrics
+    print('AUC: %.4f' % metrics.roc_auc_score(test_y, ypred))
+    print('ACC: %.4f' % metrics.accuracy_score(test_y, y_pred))
+    print('Recall: %.4f' % metrics.recall_score(test_y, y_pred))
+    print('F1-score: %.4f' % metrics.f1_score(test_y, y_pred))
+    print('Precesion: %.4f' % metrics.precision_score(test_y, y_pred))
+    print(metrics.confusion_matrix(test_y, y_pred))
+
 
 if __name__=="__main__":
 
@@ -150,13 +194,15 @@ if __name__=="__main__":
     trainLabel=[trainLabel_noshuffle[i] for i in index]
 
     #clf = GradientBoostingClassifier(max_depth=18, n_estimators=280, max_features=32)
-    clf=RandomForestClassifier(n_estimators=755, max_features=28, criterion='gini')
-    clf.fit(train_features, trainLabel)
+    # clf=RandomForestClassifier(n_estimators=755, max_features=28, criterion='gini')
+    # clf.fit(train_features, trainLabel)
 
     str_pred_features = ppp.getDomainFeatures(testDomains)
     map_pred_features=getDomanListFeature(testDomains)
     pre_features = np.append(str_pred_features, map_pred_features, axis=1)
 
-    predict_result = clf.predict(pre_features)
+    xgboost_test(train_features,pre_features,trainLabel,testLabel)
 
-    ppp.printMetric(testLabel,predict_result)
+    # predict_result = clf.predict(pre_features)
+    #
+    # ppp.printMetric(testLabel,predict_result)

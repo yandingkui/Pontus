@@ -1,16 +1,16 @@
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 import xgboost as xgb
-def xgboost_test():
-    iris = datasets.load_iris()
-    data = iris.data[:100]
-
-
-    # 一共有100个样本数据, 维度为4维
-    label = iris.target[:100]
-
-
-    train_x, test_x, train_y, test_y = train_test_split(data, label, random_state=0)
+def xgboost_test(train_x, test_x, train_y, test_y):
+    # iris = datasets.load_iris()
+    # data = iris.data[:100]
+    #
+    #
+    # # 一共有100个样本数据, 维度为4维
+    # label = iris.target[:100]
+    #
+    #
+    # train_x, test_x, train_y, test_y = train_test_split(data, label, random_state=0)
 
     dtrain = xgb.DMatrix(train_x, label=train_y)
     dtest = xgb.DMatrix(test_x)
