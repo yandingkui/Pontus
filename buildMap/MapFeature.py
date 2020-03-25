@@ -193,7 +193,7 @@ if __name__=="__main__":
 
     clf = GradientBoostingClassifier(max_depth=18, n_estimators=240, max_features=36)
     # # clf=RandomForestClassifier(n_estimators=755, max_features=28, criterion='gini')
-    # clf.fit(train_features, trainLabel)
+    clf.fit(train_features, trainLabel)
 
     str_pred_features = ppp.getDomainFeatures(testDomains)
     map_pred_features=getDomanListFeature(testDomains)
