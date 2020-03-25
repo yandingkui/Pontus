@@ -133,7 +133,7 @@ def xgboost_test(train_x, test_x, train_y, test_y):
 
     params = {'booster': 'gbtree',
               'objective': 'binary:logistic',
-              'eval_metric': 'auc',
+              'eval_metric': 'acc',
               'max_depth': 12,
               'lambda': 10,
               'subsample': 0.75,
@@ -145,7 +145,7 @@ def xgboost_test(train_x, test_x, train_y, test_y):
               'silent': 1}
 
     watchlist = [(dtrain, 'train')]
-    bst = xgb.train(params, dtrain, num_boost_round=5, evals=watchlist)
+    bst = xgb.train(params, dtrain, num_boost_round=10, evals=watchlist)
     # 输出概率
     ypred = bst.predict(dtest)
 
