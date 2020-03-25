@@ -182,13 +182,14 @@ if __name__=="__main__":
 
     ppp=pontus.pontus()
     str_train_features = ppp.getDomainFeatures(trainDomains)
-    map_train_features=getDomanListFeature(trainDomains)
+    # map_train_features=getDomanListFeature(trainDomains)
 
 
-    train_features_noshuffle=np.append(str_train_features, map_train_features, axis=1)
-    print(str_train_features[0])
-    print(map_train_features[0])
-    print(train_features_noshuffle[0])
+    train_features_noshuffle=str_train_features
+        # np.append(str_train_features, map_train_features, axis=1)
+    # print(str_train_features[0])
+    # print(map_train_features[0])
+    # print(train_features_noshuffle[0])
 
     index=[i for i in range(len(trainDomains))]
     random.shuffle(index)
@@ -202,8 +203,9 @@ if __name__=="__main__":
     print((endtime - starttime).seconds)
 
     str_pred_features = ppp.getDomainFeatures(testDomains)
-    map_pred_features=getDomanListFeature(testDomains)
-    pre_features = np.append(str_pred_features, map_pred_features, axis=1)
+    # map_pred_features=getDomanListFeature(testDomains)
+    pre_features = str_pred_features
+        # np.append(str_pred_features, map_pred_features, axis=1)
 
     xgboost_test(train_features,pre_features,trainLabel,testLabel)
     #
